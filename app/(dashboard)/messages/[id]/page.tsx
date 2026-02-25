@@ -18,7 +18,7 @@ async function updateStatus(formData: FormData) {
     // Fallback si l'ID n'est pas dans le formData directement mais via bind
     // Mais ici on utilise le formulaire classique, donc ça devrait aller si le champ hidden est présent.
     // Par sécurité, on redéfinit le client ici (Server Action)
-    const cookieStore = cookies()
+    const cookieStore = await cookies()
     const supabase = createClient(cookieStore)
 
     await supabase.from('transactions').update({ status, updated_at: new Date().toISOString() }).eq('id', id)
@@ -77,8 +77,9 @@ function UserAvatar({ name, role }: { name: string, role: string }) {
     )
 }
 
-export default async function MessagePage({ params }: { params: { id: string } }) {
-    const cookieStore = cookies()
+export default async function MessagePage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
+    const cookieStore = await cookies()
     const supabase = createClient(cookieStore)
 
     const { data: { user } } = await supabase.auth.getUser()
@@ -92,7 +93,7 @@ export default async function MessagePage({ params }: { params: { id: string } }
       sender:sender_id (full_name),
       traveler:traveler_id (full_name)
     `)
-        .eq('id', params.id)
+        .eq('id', id)
         .single()
 
     if (!transaction) return notFound()
@@ -100,7 +101,7 @@ export default async function MessagePage({ params }: { params: { id: string } }
     const { data: messages } = await supabase
         .from('messages')
         .select('*')
-        .eq('transaction_id', params.id)
+        .eq('transaction_id', id)
         .order('created_at', { ascending: true })
 
     const isTraveler = user.id === transaction.traveler_id

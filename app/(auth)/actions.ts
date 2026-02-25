@@ -6,7 +6,7 @@ import { createClient } from '@/lib/supabase/server'
 import { cookies } from 'next/headers'
 
 export async function login(formData: FormData) {
-    const cookieStore = cookies()
+    const cookieStore = await cookies()
     const supabase = createClient(cookieStore)
 
     // Trim les espaces pour éviter les problèmes de copier-coller
@@ -32,7 +32,7 @@ export async function login(formData: FormData) {
 }
 
 export async function signup(formData: FormData) {
-    const cookieStore = cookies()
+    const cookieStore = await cookies()
     const supabase = createClient(cookieStore)
 
     // Trim les espaces
@@ -64,7 +64,7 @@ export async function signup(formData: FormData) {
 }
 
 export async function signout() {
-    const cookieStore = cookies()
+    const cookieStore = await cookies()
     const supabase = createClient(cookieStore)
 
     await supabase.auth.signOut()

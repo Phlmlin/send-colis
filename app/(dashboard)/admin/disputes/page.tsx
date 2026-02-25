@@ -9,7 +9,7 @@ export const dynamic = 'force-dynamic'
 
 async function resolveDispute(formData: FormData) {
     'use server'
-    const cookieStore = cookies()
+    const cookieStore = await cookies()
     const supabase = createClient(cookieStore)
 
     const { data: { user } } = await supabase.auth.getUser()
@@ -32,7 +32,7 @@ async function resolveDispute(formData: FormData) {
 }
 
 export default async function AdminDisputesPage() {
-    const cookieStore = cookies()
+    const cookieStore = await cookies()
     const supabase = createClient(cookieStore)
 
     const { data: { user } } = await supabase.auth.getUser()

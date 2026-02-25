@@ -9,7 +9,7 @@ export const dynamic = 'force-dynamic'
 async function submitVerification(formData: FormData) {
     'use server'
 
-    const cookieStore = cookies()
+    const cookieStore = await cookies()
     const supabase = createClient(cookieStore)
 
     const { data: { user } } = await supabase.auth.getUser()
@@ -30,14 +30,14 @@ async function submitVerification(formData: FormData) {
 
     if (error) {
         console.error(error)
-        return { error: error.message }
+        return redirect(`/profile/verify?error=${encodeURIComponent(error.message)}`)
     }
 
     redirect('/profile')
 }
 
 export default async function VerifyPage() {
-    const cookieStore = cookies()
+    const cookieStore = await cookies()
     const supabase = createClient(cookieStore)
 
     const { data: { user } } = await supabase.auth.getUser()

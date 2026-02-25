@@ -8,7 +8,7 @@ import { cn } from '@/lib/utils'
 
 async function requestTransaction(formData: FormData) {
     'use server'
-    const cookieStore = cookies()
+    const cookieStore = await cookies()
     const supabase = createClient(cookieStore)
 
     const listing_id = formData.get('listing_id') as string
@@ -41,8 +41,9 @@ async function requestTransaction(formData: FormData) {
     redirect('/my-parcels')
 }
 
-export default async function ListingDetailsPage({ params }: { params: { id: string } }) {
-    const cookieStore = cookies()
+export default async function ListingDetailsPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
+    const cookieStore = await cookies()
     const supabase = createClient(cookieStore)
 
     const { data: listing } = await supabase
@@ -56,7 +57,7 @@ export default async function ListingDetailsPage({ params }: { params: { id: str
         average_rating
       )
     `)
-        .eq('id', params.id)
+        .eq('id', id)
         .single()
 
     if (!listing) return notFound()
@@ -223,3 +224,6 @@ export default async function ListingDetailsPage({ params }: { params: { id: str
         </div>
     )
 }
+
+// Import du composant
+import { ListingCard } from '@/components/shared/ListingCard'

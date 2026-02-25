@@ -9,7 +9,7 @@ import { TransportIcon } from '@/components/TransportIcon'
 export const dynamic = 'force-dynamic'
 
 export default async function MyParcelsPage() {
-    const cookieStore = cookies()
+    const cookieStore = await cookies()
     const supabase = createClient(cookieStore)
 
     const { data: { user } } = await supabase.auth.getUser()

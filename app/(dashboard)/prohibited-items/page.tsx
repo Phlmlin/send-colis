@@ -4,7 +4,7 @@ import { cookies } from 'next/headers'
 export const dynamic = 'force-dynamic'
 
 export default async function ProhibitedItemsPage() {
-    const cookieStore = cookies()
+    const cookieStore = await cookies()
     const supabase = createClient(cookieStore)
 
     const { data: items } = await supabase
