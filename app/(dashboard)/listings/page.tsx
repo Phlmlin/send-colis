@@ -3,16 +3,23 @@ import { cookies } from 'next/headers'
 import Link from 'next/link'
 import { buttonVariants } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
+import { ListingCard } from '@/components/shared/ListingCard'
+import { Pagination } from '@/components/shared/Pagination'
 
 export const dynamic = 'force-dynamic'
 
 export default async function ListingsPage({
     searchParams
 }: {
-    searchParams: { from?: string; to?: string; date?: string }
+    searchParams: { from?: string; to?: string; date?: string; page?: string }
 }) {
     const cookieStore = cookies()
     const supabase = createClient(cookieStore)
+
+    const page = Math.max(1, parseInt(searchParams.page || '1') || 1)
+    const pageSize = 9
+    const from = (page - 1) * pageSize
+    const to = from + pageSize - 1
 
     let query = supabase
         .from('listings')
@@ -23,9 +30,10 @@ export default async function ListingsPage({
         avatar_url,
         average_rating
       )
-    `)
+    `, { count: 'exact' })
         .eq('status', 'active')
         .order('created_at', { ascending: false })
+        .range(from, to)
 
     if (searchParams.from) {
         query = query.ilike('departure_city', `%${searchParams.from}%`)
@@ -38,7 +46,7 @@ export default async function ListingsPage({
         query = query.eq('departure_date', searchParams.date)
     }
 
-    const { data: listings } = await query
+    const { data: listings, count } = await query
 
     return (
         <div className="space-y-8 animate-fade-in">
@@ -110,17 +118,26 @@ export default async function ListingsPage({
 
             {/* Listings Grid */}
             {listings && listings.length > 0 ? (
-                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                    {listings.map((listing: any, index: number) => (
-                        <div
-                            key={listing.id}
-                            className="animate-fade-in"
-                            style={{ animationDelay: `${index * 50}ms` }}
-                        >
-                            <ListingCard listing={listing} />
-                        </div>
-                    ))}
-                </div>
+                <>
+                    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                        {listings.map((listing: any, index: number) => (
+                            <div
+                                key={listing.id}
+                                className="animate-fade-in"
+                                style={{ animationDelay: `${index * 50}ms` }}
+                            >
+                                <ListingCard listing={listing} />
+                            </div>
+                        ))}
+                    </div>
+
+                    <Pagination
+                        currentPage={page}
+                        totalPages={Math.ceil((count || 0) / pageSize)}
+                        searchParams={searchParams}
+                        baseUrl="/listings"
+                    />
+                </>
             ) : (
                 <div className="glass rounded-3xl p-16 text-center">
                     <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -139,5 +156,3 @@ export default async function ListingsPage({
     )
 }
 
-// Import du composant
-import { ListingCard } from '@/components/shared/ListingCard'
