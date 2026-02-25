@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
+import { CinetPayService } from '@/lib/payments/cinetpay'
 
 interface PaymentResult {
     success: boolean
@@ -39,41 +40,40 @@ export async function payConnectionFee(transactionId: string): Promise<PaymentRe
         return { success: false, error: 'Non autorisé' }
     }
 
-    // Créer le paiement (simulé pour l'instant)
-    const { error: paymentError } = await supabase
+    // 1. Créer l'enregistrement de paiement avec statut 'pending'
+    const { data: payment, error: paymentError } = await supabase
         .from('payment_transactions')
         .insert({
             transaction_id: transactionId,
             payer_id: user.id,
             amount: transaction.connection_fee,
             payment_method: 'mobile_money',
-            payment_provider: 'airtel_money', // Simulation
-            provider_transaction_id: `CONN_${Date.now()}`,
-            status: 'completed'
+            payment_provider: 'cinetpay',
+            status: 'pending'
         })
+        .select()
+        .single()
 
-    if (paymentError) {
-        return { success: false, error: 'Échec du paiement' }
+    if (paymentError || !payment) {
+        return { success: false, error: 'Échec de l\'initialisation du paiement' }
     }
 
-    // Mettre à jour le statut de la transaction
-    const { error: updateError } = await supabase
-        .from('transactions')
-        .update({
-            payment_status: 'connection_paid',
-            status: 'connection_fee_paid',
-            updated_at: new Date().toISOString()
-        })
-        .eq('id', transactionId)
+    // 2. Initialiser le paiement avec le provider (CinetPay)
+    const paymentResponse = await CinetPayService.initializePayment({
+        transactionId: payment.id, // On utilise l'ID du paiement pour le suivi
+        amount: transaction.connection_fee,
+        currency: 'XAF',
+        description: `Frais de mise en relation - Colis #${transaction.id.slice(0, 8)}`,
+        customerName: user.user_metadata.full_name || user.email || 'Client',
+        customerEmail: user.email || ''
+    })
 
-    if (updateError) {
-        return { success: false, error: 'Erreur de mise à jour' }
+    if (paymentResponse.success && paymentResponse.paymentUrl) {
+        // Redirection vers la page de paiement
+        redirect(paymentResponse.paymentUrl)
     }
 
-    revalidatePath(`/my-parcels`)
-    revalidatePath(`/messages/${transactionId}`)
-
-    return { success: true, transaction_id: transactionId }
+    return { success: false, error: paymentResponse.error || 'Erreur lors de la redirection vers le paiement' }
 }
 
 /**
@@ -107,41 +107,40 @@ export async function payTransportFee(transactionId: string, paymentMethod: 'mob
         return { success: false, error: 'Payez d\'abord les frais de mise en relation' }
     }
 
-    // Créer le paiement de transport
-    const { error: paymentError } = await supabase
+    // 1. Créer l'enregistrement de paiement avec statut 'pending'
+    const { data: payment, error: paymentError } = await supabase
         .from('payment_transactions')
         .insert({
             transaction_id: transactionId,
             payer_id: user.id,
             amount: transaction.transport_price,
             payment_method: paymentMethod,
-            payment_provider: paymentMethod === 'mobile_money' ? 'moov_money' : paymentMethod,
-            provider_transaction_id: `TRANS_${Date.now()}`,
-            status: 'completed'
+            payment_provider: 'cinetpay',
+            status: 'pending'
         })
+        .select()
+        .single()
 
-    if (paymentError) {
-        return { success: false, error: 'Échec du paiement' }
+    if (paymentError || !payment) {
+        return { success: false, error: 'Échec de l\'initialisation du paiement' }
     }
 
-    // Mettre à jour: Paiement complet, fonds en escrow
-    const { error: updateError } = await supabase
-        .from('transactions')
-        .update({
-            payment_status: 'held_in_escrow',
-            status: 'transport_fee_paid',
-            updated_at: new Date().toISOString()
-        })
-        .eq('id', transactionId)
+    // 2. Initialiser le paiement avec le provider (CinetPay)
+    const paymentResponse = await CinetPayService.initializePayment({
+        transactionId: payment.id,
+        amount: transaction.transport_price,
+        currency: 'XAF',
+        description: `Paiement transport - Colis #${transaction.id.slice(0, 8)}`,
+        customerName: user.user_metadata.full_name || user.email || 'Client',
+        customerEmail: user.email || ''
+    })
 
-    if (updateError) {
-        return { success: false, error: 'Erreur de mise à jour' }
+    if (paymentResponse.success && paymentResponse.paymentUrl) {
+        // Redirection vers la page de paiement
+        redirect(paymentResponse.paymentUrl)
     }
 
-    revalidatePath(`/my-parcels`)
-    revalidatePath(`/messages/${transactionId}`)
-
-    return { success: true, transaction_id: transactionId }
+    return { success: false, error: paymentResponse.error || 'Erreur lors de la redirection vers le paiement' }
 }
 
 /**
