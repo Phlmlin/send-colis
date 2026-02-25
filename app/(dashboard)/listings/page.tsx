@@ -9,9 +9,10 @@ export const dynamic = 'force-dynamic'
 export default async function ListingsPage({
     searchParams
 }: {
-    searchParams: { from?: string; to?: string; date?: string }
+    searchParams: Promise<{ from?: string; to?: string; date?: string }>
 }) {
-    const cookieStore = cookies()
+    const { from, to, date } = await searchParams;
+    const cookieStore = await cookies()
     const supabase = createClient(cookieStore)
 
     let query = supabase
@@ -27,15 +28,15 @@ export default async function ListingsPage({
         .eq('status', 'active')
         .order('created_at', { ascending: false })
 
-    if (searchParams.from) {
-        query = query.ilike('departure_city', `%${searchParams.from}%`)
+    if (from) {
+        query = query.ilike('departure_city', `%${from}%`)
     }
-    if (searchParams.to) {
-        query = query.ilike('arrival_city', `%${searchParams.to}%`)
+    if (to) {
+        query = query.ilike('arrival_city', `%${to}%`)
     }
-    if (searchParams.date) {
+    if (date) {
         // Simple date match for now, ideally range
-        query = query.eq('departure_date', searchParams.date)
+        query = query.eq('departure_date', date)
     }
 
     const { data: listings } = await query
@@ -68,7 +69,7 @@ export default async function ListingsPage({
                         </svg>
                         <input
                             name="from"
-                            defaultValue={searchParams.from}
+                            defaultValue={from}
                             type="text"
                             placeholder="Ville de départ"
                             className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all"
@@ -81,7 +82,7 @@ export default async function ListingsPage({
                         </svg>
                         <input
                             name="to"
-                            defaultValue={searchParams.to}
+                            defaultValue={to}
                             type="text"
                             placeholder="Ville d'arrivée"
                             className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all"
@@ -94,7 +95,7 @@ export default async function ListingsPage({
                             </svg>
                             <input
                                 name="date"
-                                defaultValue={searchParams.date}
+                                defaultValue={date}
                                 type="date"
                                 className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all"
                             />

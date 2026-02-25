@@ -8,7 +8,7 @@ export const dynamic = 'force-dynamic'
 
 async function verifyUser(formData: FormData) {
     'use server'
-    const cookieStore = cookies()
+    const cookieStore = await cookies()
     const supabase = createClient(cookieStore)
 
     const userId = formData.get('user_id') as string
@@ -29,7 +29,7 @@ async function verifyUser(formData: FormData) {
 
 async function suspendUser(formData: FormData) {
     'use server'
-    const cookieStore = cookies()
+    const cookieStore = await cookies()
     const supabase = createClient(cookieStore)
 
     const userId = formData.get('user_id') as string
@@ -47,7 +47,7 @@ async function suspendUser(formData: FormData) {
 }
 
 export default async function AdminUsersPage() {
-    const cookieStore = cookies()
+    const cookieStore = await cookies()
     const supabase = createClient(cookieStore)
 
     const { data: { user } } = await supabase.auth.getUser()

@@ -3,11 +3,12 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import Link from 'next/link'
 
-export default function SignupPage({
+export default async function SignupPage({
     searchParams,
 }: {
-    searchParams: { error?: string }
+    searchParams: Promise<{ error?: string }>
 }) {
+    const { error } = await searchParams;
     return (
         <div className="space-y-6">
             <div className="text-center">
@@ -15,13 +16,13 @@ export default function SignupPage({
                 <p className="text-gray-600 mt-2">Rejoignez la communauté SendColis</p>
             </div>
 
-            {searchParams.error && (
+            {error && (
                 <div className="bg-red-50 border-2 border-red-200 rounded-2xl p-4 animate-shake">
                     <div className="flex items-center gap-3">
                         <svg className="w-5 h-5 text-red-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
-                        <p className="text-sm text-red-800">{searchParams.error}</p>
+                        <p className="text-sm text-red-800">{error}</p>
                     </div>
                 </div>
             )}

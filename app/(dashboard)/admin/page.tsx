@@ -8,7 +8,7 @@ import { cn } from '@/lib/utils'
 export const dynamic = 'force-dynamic'
 
 export default async function AdminDashboard() {
-    const cookieStore = cookies()
+    const cookieStore = await cookies()
     const supabase = createClient(cookieStore)
 
     const { data: { user } } = await supabase.auth.getUser()

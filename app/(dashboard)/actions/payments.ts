@@ -15,7 +15,7 @@ interface PaymentResult {
  * Payer les frais de mise en relation (5000 FCFA)
  */
 export async function payConnectionFee(transactionId: string): Promise<PaymentResult> {
-    const cookieStore = cookies()
+    const cookieStore = await cookies()
     const supabase = createClient(cookieStore)
 
     const { data: { user } } = await supabase.auth.getUser()
@@ -80,7 +80,7 @@ export async function payConnectionFee(transactionId: string): Promise<PaymentRe
  * Payer les frais de transport (prix * poids)
  */
 export async function payTransportFee(transactionId: string, paymentMethod: 'mobile_money' | 'card' | 'paypal' = 'mobile_money'): Promise<PaymentResult> {
-    const cookieStore = cookies()
+    const cookieStore = await cookies()
     const supabase = createClient(cookieStore)
 
     const { data: { user } } = await supabase.auth.getUser()
@@ -148,7 +148,7 @@ export async function payTransportFee(transactionId: string, paymentMethod: 'mob
  * Libérer les fonds au voyageur après livraison
  */
 export async function releaseFunds(transactionId: string): Promise<PaymentResult> {
-    const cookieStore = cookies()
+    const cookieStore = await cookies()
     const supabase = createClient(cookieStore)
 
     const { data: { user } } = await supabase.auth.getUser()
