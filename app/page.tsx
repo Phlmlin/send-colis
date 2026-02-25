@@ -1,6 +1,9 @@
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { cookies } from 'next/headers'
+import { IllustrationCard } from '@/components/landing/IllustrationCard'
+import { FeatureStep } from '@/components/landing/FeatureStep'
+import { TrustBadge } from '@/components/landing/TrustBadge'
 
 export default async function HomePage() {
     const cookieStore = cookies()
@@ -93,74 +96,60 @@ export default async function HomePage() {
 
                             {/* Trust Badges */}
                             <div className="flex flex-wrap gap-6 pt-8 border-t border-gray-200">
-                                <div className="flex items-center gap-2">
-                                    <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                                    </svg>
-                                    <span className="text-gray-700 font-medium">Sécurisé</span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                    </svg>
-                                    <span className="text-gray-700 font-medium">Économique</span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                                    </svg>
-                                    <span className="text-gray-700 font-medium">Rapide</span>
-                                </div>
+                                <TrustBadge
+                                    icon={<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>}
+                                    text="Sécurisé"
+                                />
+                                <TrustBadge
+                                    icon={<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>}
+                                    text="Économique"
+                                />
+                                <TrustBadge
+                                    icon={<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>}
+                                    text="Rapide"
+                                />
                             </div>
                         </div>
 
                         {/* Illustration */}
                         <div className="glass rounded-3xl p-8 lg:p-12">
                             <div className="space-y-6">
-                                <div className="bg-white rounded-2xl p-6 shadow-lg">
-                                    <div className="flex items-center gap-4 mb-4">
-                                        <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                                            <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-                                            </svg>
-                                        </div>
-                                        <div>
-                                            <p className="font-semibold text-gray-900">Libreville → Paris</p>
-                                            <p className="text-sm text-gray-600">10 kg disponibles</p>
-                                        </div>
-                                    </div>
+                                <IllustrationCard
+                                    icon={
+                                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                                        </svg>
+                                    }
+                                    title="Libreville → Paris"
+                                    subtitle="10 kg disponibles"
+                                    color="blue"
+                                >
                                     <div className="bg-blue-50 rounded-xl p-4">
                                         <p className="text-2xl font-bold text-blue-600">5 000 FCFA/kg</p>
                                     </div>
-                                </div>
+                                </IllustrationCard>
 
-                                <div className="bg-white rounded-2xl p-6 shadow-lg">
-                                    <div className="flex items-center gap-4">
-                                        <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
-                                            <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                            </svg>
-                                        </div>
-                                        <div className="flex-1">
-                                            <p className="font-semibold text-gray-900">Paiement sécurisé</p>
-                                            <p className="text-sm text-gray-600">Vos fonds sont protégés</p>
-                                        </div>
-                                    </div>
-                                </div>
+                                <IllustrationCard
+                                    icon={
+                                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                        </svg>
+                                    }
+                                    title="Paiement sécurisé"
+                                    subtitle="Vos fonds sont protégés"
+                                    color="green"
+                                />
 
-                                <div className="bg-white rounded-2xl p-6 shadow-lg">
-                                    <div className="flex items-center gap-4">
-                                        <div className="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center">
-                                            <svg className="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                                            </svg>
-                                        </div>
-                                        <div className="flex-1">
-                                            <p className="font-semibold text-gray-900">Chat direct</p>
-                                            <p className="text-sm text-gray-600">Communiquez en temps réel</p>
-                                        </div>
-                                    </div>
-                                </div>
+                                <IllustrationCard
+                                    icon={
+                                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                                        </svg>
+                                    }
+                                    title="Chat direct"
+                                    subtitle="Communiquez en temps réel"
+                                    color="indigo"
+                                />
                             </div>
                         </div>
                     </div>
@@ -181,7 +170,7 @@ export default async function HomePage() {
                             title: "Publiez ou recherchez",
                             description: "Voyageurs : proposez vos kilos disponibles. Expéditeurs : trouvez un voyageur.",
                             icon: (
-                                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                                 </svg>
                             )
@@ -191,7 +180,7 @@ export default async function HomePage() {
                             title: "Connectez-vous",
                             description: "Discutez et finalisez les détails de l'envoi en toute transparence.",
                             icon: (
-                                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z" />
                                 </svg>
                             )
@@ -201,24 +190,20 @@ export default async function HomePage() {
                             title: "Envoyez en toute sécurité",
                             description: "Paiement sécurisé, suivi en temps réel et livraison confirmée.",
                             icon: (
-                                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
                                 </svg>
                             )
                         }
                     ].map((feature, i) => (
-                        <div
+                        <FeatureStep
                             key={i}
-                            className="glass rounded-3xl p-8 hover:shadow-xl transition-all duration-300 hover:-translate-y-2 animate-fade-in"
-                            style={{ animationDelay: `${i * 100}ms` }}
-                        >
-                            <div className="w-16 h-16 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center text-white mb-6 shadow-lg">
-                                {feature.icon}
-                            </div>
-                            <div className="text-sm font-bold text-blue-600 mb-2">ÉTAPE {feature.step}</div>
-                            <h3 className="text-2xl font-bold text-gray-900 mb-4">{feature.title}</h3>
-                            <p className="text-gray-600 leading-relaxed">{feature.description}</p>
-                        </div>
+                            index={i}
+                            step={feature.step}
+                            title={feature.title}
+                            description={feature.description}
+                            icon={feature.icon}
+                        />
                     ))}
                 </div>
             </div>
