@@ -15,7 +15,7 @@ export function ReviewForm({
     const [rating, setRating] = useState(5)
     const [comment, setComment] = useState('')
     const [submitted, setSubmitted] = useState(false)
-    const supabase = createClient()
+    const [supabase] = useState(() => createClient())
 
     const submitReview = async (e: React.FormEvent) => {
         e.preventDefault()

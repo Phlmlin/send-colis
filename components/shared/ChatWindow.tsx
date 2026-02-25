@@ -27,7 +27,7 @@ export function ChatWindow({
     const [messages, setMessages] = useState<Message[]>(initialMessages)
     const [newMessage, setNewMessage] = useState('')
     const [isSending, setIsSending] = useState(false)
-    const supabase = createClient()
+    const [supabase] = useState(() => createClient())
     const scrollRef = useRef<HTMLDivElement>(null)
     const bottomRef = useRef<HTMLDivElement>(null)
 
