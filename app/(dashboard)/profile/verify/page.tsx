@@ -30,7 +30,8 @@ async function submitVerification(formData: FormData) {
 
     if (error) {
         console.error(error)
-        return { error: error.message }
+        // On ne retourne rien car l'action de formulaire ne doit pas retourner d'objet pour satisfaire TS
+        return
     }
 
     redirect('/profile')
