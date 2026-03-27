@@ -30,6 +30,14 @@ export default async function MyParcelsPage() {
         .eq('sender_id', user.id)
         .order('created_at', { ascending: false })
 
+    // Optimized single-pass stats calculation
+    const stats = transactions?.reduce((acc, tx) => {
+        if (tx.status === 'pending_approval') acc.pending++;
+        else if (tx.status === 'in_transit') acc.inTransit++;
+        else if (tx.status === 'delivered') acc.delivered++;
+        return acc;
+    }, { pending: 0, inTransit: 0, delivered: 0 }) || { pending: 0, inTransit: 0, delivered: 0 };
+
     const statusColors = {
         pending_approval: 'bg-yellow-100 text-yellow-700 border-yellow-200',
         approved: 'bg-blue-100 text-blue-700 border-blue-200',
@@ -85,7 +93,7 @@ export default async function MyParcelsPage() {
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
                     </div>
-                    <div className="text-3xl font-bold text-gray-900">{transactions?.filter(t => t.status === 'pending_approval').length || 0}</div>
+                    <div className="text-3xl font-bold text-gray-900">{stats.pending}</div>
                     <div className="text-sm text-gray-600 mt-1">En attente</div>
                 </div>
 
@@ -95,7 +103,7 @@ export default async function MyParcelsPage() {
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
                         </svg>
                     </div>
-                    <div className="text-3xl font-bold text-gray-900">{transactions?.filter(t => t.status === 'in_transit').length || 0}</div>
+                    <div className="text-3xl font-bold text-gray-900">{stats.inTransit}</div>
                     <div className="text-sm text-gray-600 mt-1">En transit</div>
                 </div>
 
@@ -105,7 +113,7 @@ export default async function MyParcelsPage() {
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                         </svg>
                     </div>
-                    <div className="text-3xl font-bold text-gray-900">{transactions?.filter(t => t.status === 'delivered').length || 0}</div>
+                    <div className="text-3xl font-bold text-gray-900">{stats.delivered}</div>
                     <div className="text-sm text-gray-600 mt-1">Livrés</div>
                 </div>
 
